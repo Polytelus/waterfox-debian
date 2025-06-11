@@ -21,8 +21,7 @@ jobs:
       - name: Install system deps
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
-            git python3 python3-pip nasm patchelf zstd curl ruby-dev build-essential
+          sudo apt-get install -y git python3 python3-pip nasm patchelf zstd curl ruby-dev build-essential
 
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
@@ -38,11 +37,7 @@ jobs:
       - name: Download and extract Clang 19
         run: |
           mkdir -p $HOME/.mozbuild
-          curl -L \
-            https://firefox-ci-tc.services.mozilla.com/api/index/v1/task/\
-gecko.cache.level-3.toolchains.v3.linux64-clang-19.latest/\
-artifacts/public/build/clang.tar.zst \
-            -o clang.tar.zst
+          curl -L https://firefox-ci-tc.services.mozilla.com/api/index/v1/task/gecko.cache.level-3.toolchains.v3.linux64-clang-19.latest/artifacts/public/build/clang.tar.zst -o clang.tar.zst
           tar -xvf clang.tar.zst -C $HOME/.mozbuild
           ln -sf $HOME/.mozbuild/clang .mozconfig
 
@@ -55,8 +50,8 @@ artifacts/public/build/clang.tar.zst \
 
       - name: Run profile server
         run: |
-          ./mach python build/pgo/profileserver.py \
-            --binary ./obj-*/dist/waterfox/waterfox & sleep 30
+          ./mach python build/pgo/profileserver.py --binary ./obj-*/dist/waterfox/waterfox &
+          sleep 30
           kill %1
 
       - name: Stage 2: Build with PGO
@@ -67,18 +62,15 @@ artifacts/public/build/clang.tar.zst \
           ./mach build
           ./mach package
 
-      # ── New steps to make a .deb ──────────────────────────────────────────────
-
       - name: Install FPM
         run: |
           sudo gem install --no-document fpm
 
       - name: Build .deb package
         run: |
-          # decide on version; here we use the short git SHA
           VERSION=$(git rev-parse --short HEAD)
-          # fpm will take everything under obj-*/dist/waterfox
-          fpm -s dir -t deb \
+          fpm -s dir \
+            -t deb \
             -n waterfox \
             -v "$VERSION" \
             --architecture amd64 \
