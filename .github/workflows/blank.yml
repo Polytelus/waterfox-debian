@@ -80,9 +80,9 @@ jobs:
             --maintainer "Your Name <you@example.com>" \
             --prefix /opt/waterfox \
             obj-*/dist/waterfox/
-
-- name: Upload deb artifact
-  uses: actions/upload-artifact@v4
-  with:
-    name: ${{ steps.build_deb.outputs.deb_name }}
-    path: ${{ steps.build_deb.outputs.deb_name }}
+      
+      - name: Upload deb artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.build_deb.outputs.deb_name }}
+          path: ${{ steps.build_deb.outputs.deb_name }}
