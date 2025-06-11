@@ -41,7 +41,7 @@ jobs:
           tar -xvf clang.tar.zst -C $HOME/.mozbuild
           ln -sf $HOME/.mozbuild/clang .mozconfig
 
-      - name: Stage 1: Generate PGO profile
+      - name: Generate PGO profile
         env:
           GEN_PGO: 1
         run: |
@@ -54,7 +54,7 @@ jobs:
           sleep 30
           kill %1
 
-      - name: Stage 2: Build with PGO
+      - name: Build with PGO
         run: |
           ./mach clobber
           unset GEN_PGO
@@ -66,7 +66,7 @@ jobs:
         run: |
           sudo gem install --no-document fpm
 
-      - name: Build .deb package
+      - name: Build deb package
         run: |
           VERSION=$(git rev-parse --short HEAD)
           fpm -s dir \
@@ -81,7 +81,7 @@ jobs:
             --prefix /opt/waterfox \
             obj-*/dist/waterfox/
 
-      - name: Upload .deb artifact
+      - name: Upload deb artifact
         uses: actions/upload-artifact@v3
         with:
           name: waterfox-deb
